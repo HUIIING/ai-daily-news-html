@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily News 每日新闻</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #fefefe;
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #e8f5e9;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333333;
+        }
+
+        .date {
+            font-size: 16px;
+            color: #666666;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 30px;
+        }
+
+        .sidebar {
+            flex: 0 0 250px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333333;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f5e9;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #4caf50;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #666666;
+            font-size: 13px;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #f1f8e9;
+            color: #4caf50;
+        }
+
+        .sidebar a.active {
+            background-color: #f1f8e9;
+            color: #4caf50;
+            font-weight: 500;
+        }
+
+        .content {
+            flex: 1;
+        }
+
+        .top-section {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .ai-summary {
+            flex: 0 0 35%;
+            background-color: #fff3e0;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .ai-summary h2 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #333333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .ai-summary-style-select {
+            padding: 4px 8px;
+            border: 1px solid #ff9800;
+            border-radius: 6px;
+            background-color: white;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .ai-summary-content {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #333333;
+        }
+
+        .rankings {
+            flex: 1;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .rankings h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #333333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rankings-note {
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .rankings ul {
+            list-style: none;
+        }
+
+        .rankings li {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e8f5e9;
+        }
+
+        .rankings li:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .rankings a {
+            text-decoration: none;
+            color: #333333;
+            font-size: 13px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .ranking-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4caf50;
+            min-width: 25px;
+            line-height: 1.4;
+        }
+
+        .ranking-hotness {
+            font-size: 10px;
+            color: #ff6b6b;
+            background-color: #ffebee;
+            padding: 1px 6px;
+            border-radius: 4px;
+            margin-left: auto;
+            white-space: nowrap;
+        }
+
+        .rankings a:hover {
+            color: #4caf50;
+        }
+
+        .news-section {
+            margin-bottom: 40px;
+        }
+
+        .news-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f5e9;
+        }
+
+        .news-section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #333333;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(48%, 1fr));
+            gap: 20px;
+        }
+
+        .news-card {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e8f5e9;
+        }
+
+        .news-card:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .news-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .news-tag {
+            background-color: #ff9800;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .news-date {
+            font-size: 12px;
+            color: #666666;
+        }
+
+        .news-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333333;
+            line-height: 1.4;
+        }
+
+        .news-summary {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .news-data-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .data-tag {
+            background-color: #f1f8e9;
+            color: #4caf50;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .bottom-section {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .ai-question {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ai-question input {
+            padding: 10px;
+            border: 1px solid #e8f5e9;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 300px;
+        }
+
+        .ai-question button {
+            padding: 0 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .ai-question button:hover {
+            background-color: #45a049;
+        }
+
+        .reading-summary button {
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .reading-summary button:hover {
+            background-color: #45a049;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .language-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e8f5e9;
+            padding-bottom: 15px;
+        }
+        
+        .language-toggle button {
+            padding: 8px 16px;
+            border: 1px solid #4caf50;
+            border-radius: 6px;
+            background-color: white;
+            color: #4caf50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .language-toggle button.active {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .language-content {
+            display: none;
+        }
+        
+        .language-content.active {
+            display: block;
+        }
+        
+        .original-content {
+            border-left: 3px solid #f1f8e9;
+            padding-left: 15px;
+            margin-top: 20px;
+            font-style: italic;
+            color: #666;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .modal-news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-news-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+
+        .modal-news-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #333333;
+            margin-bottom: 30px;
+        }
+
+        .modal-news-content p {
+            margin-bottom: 15px;
+        }
+
+        .modal-news-link {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e8f5e9;
+        }
+
+        .modal-news-link a {
+            color: #4caf50;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .modal-news-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                flex: 1;
+                position: static;
+                margin-bottom: 20px;
+            }
+
+            .top-section {
+                flex-direction: column;
+            }
+
+            .rankings {
+                flex: 1;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bottom-section {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .ai-question input {
+                width: 100%;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 20px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .news-card {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .modal-content {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Daily News 每日新闻</h1>
+            <span class="date">{{DATE}}</span>
+        </header>
+
+        <div class="main-content">
+            <nav class="sidebar">
+                <h2>📚 新闻索引</h2>
+                {{SIDEBAR_INDEX}}
+            </nav>
+
+            <main class="content">
+                <section class="top-section">
+                    <div class="ai-summary">
+                        <div class="ai-summary-header">
+                            <h2>🤖 AI 今日新闻摘要</h2>
+                            <select class="ai-summary-style-select" id="summary-style" onchange="changeSummaryStyle()">
+                                <option value="story">📖 故事性</option>
+                                <option value="concise">📋 简洁版</option>
+                                <option value="professional">💼 专业版</option>
+                            </select>
+                        </div>
+                        <div class="ai-summary-content" id="ai-summary-content"></div>
+                    </div>
+
+                    <div class="rankings">
+                        <h2>🏆 今日热点排行榜</h2>
+                        <p class="rankings-note">
+                            <span>🔥</span>
+                            AI根据阅读量、讨论度、时效性综合计算热度
+                        </p>
+                        <ul id="rankings-list">{{RANKINGS}}</ul>
+                    </div>
+                </section>
+
+                <section class="news-section" id="domestic-section">
+                    <div class="news-section-header">
+                        <h2 class="news-section-title">🇨🇳 国内新闻</h2>
+                    </div>
+                    {{DOMESTIC_NEWS}}
+                </section>
+
+                <section class="news-section" id="international-section">
+                    <div class="news-section-header">
+                        <h2 class="news-section-title">🌍 国际新闻</h2>
+                    </div>
+                    {{INTERNATIONAL_NEWS}}
+                </section>
+
+                <section class="bottom-section">
+                    <div class="ai-question">
+                        <input type="text" placeholder="输入你的问题...">
+                        <button onclick="askAI()">💬 AI提问</button>
+                    </div>
+                    <div class="reading-summary">
+                        <button onclick="showReadingSummary()">📊 阅读总结</button>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div class="modal" id="news-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>新闻详情</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-news-header">
+                <span class="news-tag" id="modal-tag">时政要闻</span>
+                <span class="news-date" id="modal-date-source"></span>
+            </div>
+            <div class="language-toggle" id="modal-language-toggle" style="display: none;">
+                <button id="btn-zh" class="active" onclick="switchLanguage('zh')">🇨🇳 中文</button>
+                <button id="btn-original" onclick="switchLanguage('original')">🌐 原文</button>
+            </div>
+            <div class="language-content active" id="content-zh">
+                <h3 class="modal-news-title" id="modal-title-zh"></h3>
+                <div class="modal-news-content" id="modal-content-zh"></div>
+            </div>
+            <div class="language-content" id="content-original">
+                <h3 class="modal-news-title" id="modal-title-original"></h3>
+                <div class="modal-news-content" id="modal-content-original"></div>
+            </div>
+            <div class="modal-news-link" id="modal-link"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="summary-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 阅读总结</h2>
+                <span class="close" onclick="closeSummaryModal()">&times;</span>
+            </div>
+            <div class="modal-news-content">
+                <p><strong>今日阅读统计：</strong></p>
+                <p>• 已读新闻：<span id="read-count">0</span> / 6 篇</p>
+                <p>• 阅读时长：<span id="read-time">0</span> 分钟</p>
+                <p>• 偏好领域：时政、科技、经济</p>
+                <p style="margin-top: 20px; color: #666;">（此功能在正式版本中将记录您的实际阅读行为）</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const newsDetails = {{NEWS_DETAILS_JSON}};
+        
+        const summaryContents = {
+            story: `{{SUMMARY_STORY}}`,
+            concise: `{{SUMMARY_CONCISE}}`,
+            professional: `{{SUMMARY_PROFESSIONAL}}`
+        };
+
+        function initSummary() {
+            changeSummaryStyle();
+        }
+
+        function changeSummaryStyle() {
+            const style = document.getElementById('summary-style').value;
+            const contentEl = document.getElementById('ai-summary-content');
+            contentEl.innerHTML = summaryContents[style];
+        }
+
+        function scrollToNews(newsId) {
+            const element = document.getElementById(newsId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                element.style.boxShadow = '0 0 0 2px #4caf50';
+                setTimeout(() => {
+                    element.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
+                }, 2000);
+            }
+        }
+
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function openModal(newsId) {
+            const news = newsDetails[newsId];
+            if (news) {
+                document.getElementById('modal-tag').textContent = news.tag;
+                document.getElementById('modal-date-source').textContent = news.date + ' · ' + news.source;
+                document.getElementById('modal-title-zh').textContent = news.title;
+                document.getElementById('modal-content-zh').innerHTML = news.content.split('\n').map(p => '<p>' + p + '</p>').join('');
+                document.getElementById('modal-link').innerHTML = 
+                    '<strong>新闻链接：</strong><a href="' + news.link + '" target="_blank">' + news.link + '</a>';
+            }
+            document.getElementById('news-modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('news-modal').style.display = 'none';
+        }
+
+        function showReadingSummary() {
+            document.getElementById('summary-modal').style.display = 'block';
+        }
+
+        function closeSummaryModal() {
+            document.getElementById('summary-modal').style.display = 'none';
+        }
+
+        function askAI() {
+            const input = document.querySelector('.ai-question input');
+            if (input.value.trim()) {
+                alert('AI问答功能将在正式版本中实现！\n您的问题：' + input.value);
+                input.value = '';
+            } else {
+                alert('请输入您的问题');
+            }
+        }
+
+        window.onclick = function(event) {
+            const newsModal = document.getElementById('news-modal');
+            const summaryModal = document.getElementById('summary-modal');
+            if (event.target == newsModal) {
+                newsModal.style.display = 'none';
+            }
+            if (event.target == summaryModal) {
+                summaryModal.style.display = 'none';
+            }
+        }
+
+        function switchLanguage(lang) {
+            if (lang === 'zh') {
+                document.getElementById('content-zh').classList.add('active');
+                document.getElementById('content-original').classList.remove('active');
+                document.getElementById('btn-zh').classList.add('active');
+                document.getElementById('btn-original').classList.remove('active');
+            } else {
+                document.getElementById('content-original').classList.add('active');
+                document.getElementById('content-zh').classList.remove('active');
+                document.getElementById('btn-original').classList.add('active');
+                document.getElementById('btn-zh').classList.remove('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            let readCount = 0;
+            let readTime = 0;
+            
+            setInterval(() => {
+                readTime++;
+                const timeEl = document.getElementById('read-time');
+                if (timeEl) timeEl.textContent = readTime;
+            }, 60000);
+            
+            document.querySelectorAll('.news-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    readCount++;
+                    const countEl = document.getElementById('read-count');
+                    if (countEl) countEl.textContent = readCount;
+                });
+            });
+
+            initSummary();
+        });
+    </script>
+</body>
+</html>
